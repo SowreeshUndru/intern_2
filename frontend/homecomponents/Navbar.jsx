@@ -15,9 +15,11 @@ const Navbar = () => {
     async function signout() {
         try {
             await axiosinstance.get("/user/logout").then((res) => {
+              
                 console.log(res.data);
                 if(res.status==200){
-                    //localStorage.setItem("token","");
+                    localStorage.removeItem("token");
+                  
                     navigate("/login");
                 }
             });

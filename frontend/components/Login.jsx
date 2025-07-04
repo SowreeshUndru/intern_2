@@ -11,6 +11,7 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [phoneNumber, setPhonenumber] = useState("");
     const [error, setError] = useState("");
+    const [token,setToken]=useState("");
     
   const Navigate = useNavigate();
     function submission(e) {
@@ -18,8 +19,9 @@ const Login = () => {
        
         axiosinstance.post("/user/login", { email, password})
             .then((res) => {
-               
-                localStorage.setItem("token", res.data.token);
+               // setToken(res.data.token);
+                console.log(res.data.token);
+              localStorage.setItem("token", res.data.token);
                 console.log("login successful");
                 console.log(res.data.token);
                   const roomid=res.data.roomid;
