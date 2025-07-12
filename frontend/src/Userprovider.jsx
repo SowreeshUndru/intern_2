@@ -2,42 +2,47 @@ import React, { createContext, useState, useEffect } from 'react';
 
 const usercontext = createContext();
 
+// Utility function to safely parse JSON from localStorage
+const safeJSONParse = (key, fallback) => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch (e) {
+    console.error(`Error parsing localStorage key "${key}":`, e);
+    return fallback;
+  }
+};
+
 const Userprovider = ({ children }) => {
-  const [enable, setEnable] = useState(() => JSON.parse(localStorage.getItem('enable')) || false);
+  const [enable, setEnable] = useState(() => safeJSONParse('enable', false));
   const [item, setItem] = useState(() => localStorage.getItem('item') || "");
-  const [item2, setItem2] = useState(() => JSON.parse(localStorage.getItem('item2')) || false);
+  const [item2, setItem2] = useState(() => safeJSONParse('item2', false));
   const [email, setEmail] = useState(() => localStorage.getItem('email') || "");
   const [attr, setAttr] = useState(() => localStorage.getItem('attr') || "");
   const [myid, setMyid] = useState(() => localStorage.getItem('myid') || "");
 
-  const [img, setImg] = useState(() => {
-  const stored = localStorage.getItem('img');
-  return stored ? JSON.parse(stored) : { data: "", contentType: "" };
-});
+  const [img, setImg] = useState(() => 
+    safeJSONParse('img', { data: "", contentType: "" })
+  );
 
-  
-  const [array, setArray] = useState(() => {
-    const stored = localStorage.getItem('array');
-    return stored ? JSON.parse(stored) : [];
-  });
+  const [array, setArray] = useState(() => 
+    safeJSONParse('array', [])
+  );
 
-  const [itemdetails, setItemdetails] = useState(() => {
-    const stored = localStorage.getItem('itemdetails');
-    return stored
-      ? JSON.parse(stored)
-      : {
-          itemid: "",
-          brand: "",
-          color: "",
-          date: "",
-          description: "",
-          location: "",
-          name: "",
-          question: "",
-          serialnumber: "",
-          userid: ""
-        };
-  });
+  const [itemdetails, setItemdetails] = useState(() => 
+    safeJSONParse('itemdetails', {
+      itemid: "",
+      brand: "",
+      color: "",
+      date: "",
+      description: "",
+      location: "",
+      name: "",
+      question: "",
+      serialnumber: "",
+      userid: ""
+    })
+  );
 
   useEffect(() => {
     localStorage.setItem('enable', JSON.stringify(enable));
@@ -63,9 +68,9 @@ const Userprovider = ({ children }) => {
     localStorage.setItem('myid', myid);
   }, [myid]);
 
- useEffect(() => {
-  localStorage.setItem('img', JSON.stringify(img));
-}, [img]);
+  useEffect(() => {
+    localStorage.setItem('img', JSON.stringify(img));
+  }, [img]);
 
   useEffect(() => {
     localStorage.setItem('itemdetails', JSON.stringify(itemdetails));

@@ -23,8 +23,10 @@ async function logincontrol(req, res) {
         else {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
+                console.log("hello");
                 return res.status(401).json({
                     message: "Invalid email or password"
+                    
                 });
             }
             else {
@@ -84,7 +86,7 @@ async function logoutcontrol(req, res) {
     }
     else {
         await redisclient.set(token, "logout", "EX", 60 * 60 * 24);
-        res.status(200).json({
+       return res.status(200).json({
             message: "Logout successful"
         });
     }

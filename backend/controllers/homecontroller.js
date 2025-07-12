@@ -6,10 +6,12 @@ const LostItem = require('../models/lostitems.js');
 const FoundItem = require('../models/founditems.js');
 async function authcontrol(req, res) {
     const email = req.user.email;
+    console.log(email);
     try {
         const userdetails = await User.findOne({ email: email }); // this returns all fields
 
         if (!userdetails) {
+            console.log("hello");
             return res.status(401).json({
                 status: false,
                 message: "Unauthorized"

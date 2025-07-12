@@ -1,45 +1,32 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/usermodel");
 const redisclient = require("../services/redis");
 
 async function authorization(req, res, next) {
-    try {
-        const token = req.headers.authorization?.split(" ")[1];
-        
-        if (!token) {
-            return res.status(401).json({
-                message: "Unauthorized"
-            });
-        }
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    console.log(token);
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized: No token" });
+    }
 
-        try {
-            
-               await redisclient.get(token, (err, data) => {
-                    
-                    if (data) {
-                        return res.status(401).json({
-                            message: "Unauthorized"
-                        });
-                    }
-                });
-            
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = decoded;
-            console.log(decoded);
-            next();
-        }
-        catch (err) {
-            return res.status(401).json({
-                message: "Unauthorized"
-            });
-        }
+    const data = await redisclient.get(token); // ✅ Proper promise-based call
+    if (data) {
+      console.log("hello");
+      return res.status(401).json({ message: "Unauthorized: Logged out token" });
     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({
-            message: "Internal server error"
-        });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    console.log(decoded);
+
+    return next(); // ✅ Only call next() if no response was sent
+
+  } catch (err) {
+    console.error("Auth error:", err);
+    if (!res.headersSent) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
+  }
 }
 
 module.exports = authorization;
